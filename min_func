@@ -1,0 +1,76 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+const double f = 0.6180339887;
+
+double Function(double x) {
+	return exp(1)*cos(1.5*x + 1);
+}
+
+double FibonacciNumber(int n) {
+	if (n == 0) return 0;
+	if (n == 1) return 1;
+	double x1 = 0;
+	double x2 = 1;
+	double numb = 0;
+	for (int i = 0; i < n-2; i++) {
+		numb = x1 + x2;
+		x1 = x2;
+		x2 = numb;
+	}
+	return numb;
+}
+
+double Fibonacci(double left, double right, int n) {
+	double x1, x2, y1, y2;
+	for (int i = n; i > 1; i--) {
+		x1 = left + (right - left) * (FibonacciNumber(i - 2) / FibonacciNumber(i));
+		x2 = left + (right - left) * (FibonacciNumber(i - 1) / FibonacciNumber(i));
+		y1 = Function(x1);
+		y2 = Function(x2);
+		if (y1 > y2) left = x2;
+		else right = x1;
+	}
+	return left;
+}
+
+double Gold(double left, double right, double eps) {
+	double x1, x2, y1, y2;
+	while (right - left > 2*eps) {
+		x1 = left + f * (right - left);
+		x2 = left + (1 - f)*(right - left);
+		y1 = Function(x1);
+		y2 = Function(x2);
+		if (y1 > y2) right = x1;
+		else left = x2;
+	}
+	return left;
+}
+
+double Dichotomy(double left, double right, double eps) {
+	double mid;
+	double x1, x2, y1, y2;
+	while (right - left > 2*eps) {
+		mid = (left + right) / 2;
+		x1 = mid - eps / 2;
+		x2 = mid + eps / 2;
+		y1 = Function(x1);
+		y2 = Function(x2);
+		if (y1 > y2) 
+			left = x1;
+		else 
+			right = x2;
+	}
+	return left;
+}
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	cout << "Метод Дихотомии: " << Dichotomy(0, 2, 1e-10) << endl;
+	cout << "_________________" << endl;
+	cout << "Метод Золотого сечения: " << Gold(0, 2, 1e-10) << endl;
+	cout << "_________________" << endl;
+	cout << "Метод Фибоначчи: " << Fibonacci(0, 2, 70);
+}
